@@ -22,7 +22,7 @@ const RecordsTable: React.FC = () => {
   };
 
   const handleGeneratePDF = async () => {
-    await new Promise(resolve => setTimeout(resolve, 500)); // aguarda o DOM atualizar
+    await new Promise(resolve => setTimeout(resolve, 500)); // garante que os gráficos estejam visíveis
     const { generatePDF } = await import('../utils/pdfGenerator');
     generatePDF(records);
   };
@@ -107,49 +107,39 @@ const RecordsTable: React.FC = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {sortedRecords.map((record) => (
                     <tr key={record.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        <span className="block sm:hidden">{format(record.date, 'dd/MM HH:mm')}</span>
-                        <span className="hidden sm:block">
-                          {format(record.date, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                        </span>
+                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                        {format(record.date, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
                         {record.systolic && record.diastolic ? (
                           <span
-                            className={
-                              isBloodPressureAbnormal(record.systolic, record.diastolic)
-                                ? 'text-red-600 font-medium'
-                                : 'text-gray-900'
-                            }
+                            className={isBloodPressureAbnormal(record.systolic, record.diastolic)
+                              ? 'text-red-600 font-medium'
+                              : 'text-gray-900'}
                           >
-                            {record.systolic}/{record.diastolic}
-                            <span className="hidden sm:inline"> mmHg</span>
+                            {record.systolic}/{record.diastolic} <span className="hidden sm:inline">mmHg</span>
                           </span>
                         ) : (
                           <span className="text-gray-400"> </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
                         {record.glycemia !== undefined ? (
                           <span
-                            className={
-                              isGlycemiaAbnormal(record.glycemia)
-                                ? 'text-red-600 font-medium'
-                                : 'text-gray-900'
-                            }
+                            className={isGlycemiaAbnormal(record.glycemia)
+                              ? 'text-red-600 font-medium'
+                              : 'text-gray-900'}
                           >
-                            {record.glycemia}
-                            <span className="hidden sm:inline"> mg/dL</span>
+                            {record.glycemia} <span className="hidden sm:inline">mg/dL</span>
                           </span>
                         ) : (
                           <span className="text-gray-400"> </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
                         {record.heartRate !== undefined ? (
                           <>
-                            {record.heartRate}
-                            <span className="hidden sm:inline"> bpm</span>
+                            {record.heartRate} <span className="hidden sm:inline">bpm</span>
                           </>
                         ) : (
                           <span className="text-gray-400"> </span>
@@ -158,11 +148,10 @@ const RecordsTable: React.FC = () => {
                       <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
                         {record.observations || <span className="text-gray-400"> </span>}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <td className="px-6 py-4 text-right whitespace-nowrap">
                         <button
                           onClick={() => handleDelete(record.id)}
                           className="text-red-600 hover:text-red-900"
-                          title="Excluir registro"
                         >
                           <Trash2 size={18} />
                         </button>
