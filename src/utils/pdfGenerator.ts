@@ -17,36 +17,10 @@ export const generatePDF = async (records: HealthRecord[]) => {
   doc.setFontSize(10);
   doc.text(`Gerado em: ${currentDate}`, 15, 22);
 
-  // Função para capturar os gráficos após um pequeno delay
-  const captureChart = async (id: string) => {
-    const el = document.getElementById(id);
-    if (!el) return null;
-    await new Promise(resolve => setTimeout(resolve, 500)); // Aguarda renderização
-    const canvas = await html2canvas(el);
-    return canvas.toDataURL('image/png');
-  };
-
-  const glycemiaImg = await captureChart('glycemia-chart');
-  const bpImg = await captureChart('blood-pressure-chart');
-  const hrImg = await captureChart('heart-rate-chart');
-
-  // Renderiza os gráficos na primeira página
-  let y = 30;
-  const renderImage = (img: string | null, height: number) => {
-    if (img) {
-      doc.addImage(img, 'PNG', 15, y, 90, height);
-      y += height + 5;
-    }
-  };
-
-  renderImage(glycemiaImg, 40);
-  renderImage(bpImg, 40);
-  renderImage(hrImg, 40);
-
-  // Resumo
+  // Tabela de resumo primeiro
   if (records.length > 0) {
     doc.setFontSize(14);
-    doc.text('Resumo', 115, 30);
+    doc.text('Resumo', 15, 30);
 
     const last7 = applyDateFilter(records, { type: 'last7days' });
 
@@ -65,13 +39,41 @@ export const generatePDF = async (records: HealthRecord[]) => {
 
     autoTable(doc, {
       startY: 35,
-      margin: { left: 115 },
+      margin: { left: 15 },
       head: [['Métrica', 'Média Geral', 'Média 7 dias']],
       body: summaryData,
       theme: 'grid',
       headStyles: { fillColor: [59, 130, 246], textColor: 255 },
     });
   }
+
+  // Captura os gráficos
+  const captureChart = async (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const canvas = await html2canvas(el);
+    return canvas.toDataURL('image/png');
+  };
+
+  const glycemiaImg = await captureChart('glycemia-chart');
+  const bpImg = await captureChart('blood-pressure-chart');
+  const hrImg = await captureChart('heart-rate-chart');
+
+  let y = doc.lastAutoTable?.finalY ? doc.lastAutoTable.finalY + 10 : 80;
+
+  const renderImage = (img: string | null, height: number, label: string) => {
+    if (img) {
+      doc.setFontSize(12);
+      doc.text(label, 15, y);
+      y += 5;
+      doc.addImage(img, 'PNG', 15, y, 260, height);
+      y += height + 10;
+    }
+  };
+
+  renderImage(glycemiaImg, 40, 'Gráfico de Glicemia');
+  renderImage(bpImg, 40, 'Gráfico de Pressão Arterial');
+  renderImage(hrImg, 40, 'Gráfico de Frequência Cardíaca');
 
   // Página de registros
   doc.addPage();
@@ -120,7 +122,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
     }
   });
 
-  // Rodapé com paginação
+  // Rodapé
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
