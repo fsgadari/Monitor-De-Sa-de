@@ -41,11 +41,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
   const systolicData = filteredRecords.map(record => record.systolic!);
   const diastolicData = filteredRecords.map(record => record.diastolic!);
 
-  const maxY = Math.max(
-    160,
-    ...systolicData,
-    ...diastolicData
-  ) + 10;
+  const maxY = Math.max(160, ...systolicData, ...diastolicData) + 10;
 
   const data = {
     labels,
@@ -57,8 +53,8 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
         backgroundColor: 'rgba(239, 68, 68, 0.5)',
         pointBackgroundColor: filteredRecords.map(record =>
           record.systolic! < 90 || record.systolic! > 139
-            ? 'rgba(239, 68, 68, 0.9)'
-            : 'rgba(239, 68, 68, 0.5)'
+            ? 'rgba(239, 68, 68, 0.9)' // vermelho
+            : 'rgba(34, 197, 94, 0.8)' // verde
         ),
         pointRadius: 5,
         tension: 0.1,
@@ -70,8 +66,8 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
         backgroundColor: 'rgba(59, 130, 246, 0.5)',
         pointBackgroundColor: filteredRecords.map(record =>
           record.diastolic! < 60 || record.diastolic! > 90
-            ? 'rgba(239, 68, 68, 0.9)'
-            : 'rgba(59, 130, 246, 0.5)'
+            ? 'rgba(239, 68, 68, 0.9)' // vermelho
+            : 'rgba(34, 197, 94, 0.8)' // verde
         ),
         pointRadius: 5,
         tension: 0.1,
