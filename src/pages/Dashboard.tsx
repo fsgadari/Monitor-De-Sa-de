@@ -7,7 +7,7 @@ import HeartRateChart from '../components/HeartRateChart';
 import { DateFilter } from '../types';
 import { applyDateFilter } from '../utils/dateFilters';
 import { Link } from 'react-router-dom';
-import { PlusCircle, ListPlus } from 'lucide-react';
+import { PlusCircle, ListPlus, FileText } from 'lucide-react';
 import { generatePDF } from '../utils/pdfGenerator';
 
 const Dashboard: React.FC = () => {
@@ -16,18 +16,34 @@ const Dashboard: React.FC = () => {
 
   const filteredRecords = applyDateFilter(records, dateFilter);
 
+  const handleGeneratePDF = () => {
+    generatePDF(records);
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
 
-        <Link
-          to="/form"
-          className="bg-blue-600 text-white py-2 px-4 rounded-full flex items-center gap-2 hover:bg-blue-700 transition duration-200 shadow-sm"
-        >
-          <PlusCircle size={18} />
-          <span>Novo Registro</span>
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            to="/form"
+            className="bg-blue-600 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-blue-700 transition"
+          >
+            <PlusCircle size={18} />
+            <span>Novo Registro</span>
+          </Link>
+
+          {records.length > 0 && (
+            <button
+              onClick={handleGeneratePDF}
+              className="bg-green-600 text-white py-2 px-4 rounded-md flex items-center gap-2 hover:bg-green-700 transition"
+            >
+              <FileText size={18} />
+              <span>Gerar PDF</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {records.length === 0 ? (
@@ -59,20 +75,13 @@ const Dashboard: React.FC = () => {
             <HeartRateChart records={filteredRecords} />
           </div>
 
-          <div className="text-center mt-6 space-y-3">
+          <div className="text-center mt-6">
             <Link
               to="/records"
-              className="text-blue-600 hover:text-blue-800 font-medium block"
+              className="text-blue-600 hover:text-blue-800 font-medium"
             >
               Ver tabela completa de registros →
             </Link>
-
-            <button
-              onClick={() => generatePDF(records)}
-              className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200"
-            >
-              Gerar PDF com Gráficos
-            </button>
           </div>
         </>
       )}
