@@ -6,9 +6,9 @@ const HealthForm: React.FC = () => {
 
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
-  const [glucose, setGlucose] = useState('');
+  const [glycemia, setGlycemia] = useState('');
   const [heartRate, setHeartRate] = useState('');
-  const [notes, setNotes] = useState('');
+  const [observations, setObservations] = useState('');
   const [date, setDate] = useState(() => {
     const now = new Date();
     const iso = now.toISOString();
@@ -27,18 +27,18 @@ const HealthForm: React.FC = () => {
     addRecord({
       systolic: systolic ? parseInt(systolic) : undefined,
       diastolic: diastolic ? parseInt(diastolic) : undefined,
-      glucose: glucose ? parseInt(glucose) : undefined,
+      glycemia: glycemia ? parseInt(glycemia) : undefined,
       heartRate: heartRate ? parseInt(heartRate) : undefined,
-      notes,
+      observations,
       date: parsedDate,
     });
 
     // Limpar formulário
     setSystolic('');
     setDiastolic('');
-    setGlucose('');
+    setGlycemia('');
     setHeartRate('');
-    setNotes('');
+    setObservations('');
     setDate(new Date().toISOString().substring(0, 16));
   };
 
@@ -70,8 +70,8 @@ const HealthForm: React.FC = () => {
           <label className="block mb-1">Glicemia (mg/dL)</label>
           <input
             type="number"
-            value={glucose}
-            onChange={(e) => setGlucose(e.target.value)}
+            value={glycemia}
+            onChange={(e) => setGlycemia(e.target.value)}
             className="w-full p-2 border rounded"
             placeholder="Ex: 95"
           />
@@ -89,8 +89,8 @@ const HealthForm: React.FC = () => {
         <div>
           <label className="block mb-1">Observações</label>
           <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            value={observations}
+            onChange={(e) => setObservations(e.target.value)}
             className="w-full p-2 border rounded"
             rows={3}
             placeholder="Ex: Após o almoço, dor de cabeça leve..."
