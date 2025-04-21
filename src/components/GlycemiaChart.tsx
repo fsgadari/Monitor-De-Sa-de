@@ -66,12 +66,10 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top',
-      },
+      legend: { position: 'top' },
       tooltip: {
         callbacks: {
-          afterLabel: function (context) {
+          afterLabel: context => {
             const value = context.parsed.y;
             if (value < 70) return 'Glicemia baixa';
             if (value > 180) return 'Glicemia alta';
@@ -81,7 +79,7 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
       },
       annotation: {
         annotations: {
-          line1: {
+          linhaBaixa: {
             type: 'line',
             yMin: 70,
             yMax: 70,
@@ -89,7 +87,7 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
             borderWidth: 1,
             borderDash: [6, 6],
           },
-          line2: {
+          linhaAlta: {
             type: 'line',
             yMin: 180,
             yMax: 180,
@@ -104,26 +102,13 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
       y: {
         min: 40,
         max: Math.max(300, Math.max(...glycemiaData) + 20),
-        ticks: {
-          stepSize: 10,
-          precision: 0,
-        },
-        grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
-          drawBorder: true
-        }
+        ticks: { stepSize: 10, precision: 0 },
+        grid: { color: 'rgba(0, 0, 0, 0.05)' }
       },
       x: {
-        grid: {
-          display: false,
-        }
+        grid: { display: false }
       }
-    },
-    elements: {
-      line: {
-        borderWidth: 2
-      }
-    },
+    }
   };
 
   return (
