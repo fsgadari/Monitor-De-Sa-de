@@ -1,15 +1,16 @@
 import React from 'react';
-import { 
-  Chart as ChartJS, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Title, 
-  Tooltip, 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
   Legend,
-  ChartOptions
+  ChartOptions,
 } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import { Line } from 'react-chartjs-2';
 import { HealthRecord } from '../types';
 import { format } from 'date-fns';
@@ -22,7 +23,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  annotationPlugin
 );
 
 interface GlycemiaChartProps {
@@ -30,17 +32,16 @@ interface GlycemiaChartProps {
 }
 
 const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
-  // Filter records that have glycemia values and sort by date
   const filteredRecords = records
     .filter(record => record.glycemia !== undefined)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
-  
-  const labels = filteredRecords.map(record => 
+
+  const labels = filteredRecords.map(record =>
     format(record.date, 'dd/MM HH:mm', { locale: ptBR })
   );
-  
+
   const glycemiaData = filteredRecords.map(record => record.glycemia);
-  
+
   const data = {
     labels,
     datasets: [
@@ -57,69 +58,67 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
         }),
         pointRadius: 5,
         tension: 0.1,
-      }
-    ]
+      },
+    ],
   };
-  
+
   const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'top',
       },
       tooltip: {
         callbacks: {
-          afterLabel: function(context) {
+          afterLabel: function (context) {
             const value = context.parsed.y;
             if (value < 70) return 'Glicemia baixa';
             if (value > 180) return 'Glicemia alta';
             return 'Glicemia normal';
-          }
-        }
-      }
+          },
+        },
+      },
+      annotation: {
+        annotations: {
+          range: {
+            type: 'box',
+            yMin: 70,
+            yMax: 180,
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            borderWidth: 1,
+            borderColor: 'rgba(34, 197, 94, 0.4)',
+          },
+        },
+      },
     },
     scales: {
       y: {
-        beginAtZero: false,
+        suggestedMin: 40,
+        suggestedMax: 250,
+        ticks: {
+          stepSize: 20,
+          precision: 0,
+        },
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
         },
-        ticks: {
-          precision: 0,
-        }
       },
       x: {
         grid: {
           display: false,
-        }
-      }
-    }
+        },
+      },
+    },
   };
-  
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Glicemia</h3>
-      
-      <div className="h-64">
+      <div className="h-64 relative">
         {filteredRecords.length > 0 ? (
           <>
-            <div 
-              className="absolute hidden sm:block" 
-              style={{
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                height: '179px',
-                width: 'calc(100% - 8rem)',
-                marginLeft: '4rem',
-                marginTop: '30px',
-                zIndex: 1,
-                borderTop: '1px dashed rgba(34, 197, 94, 0.4)',
-                borderBottom: '1px dashed rgba(34, 197, 94, 0.4)',
-              }}
-            />
-            <div className="relative z-10">
-              <Line options={options} data={data} />
-            </div>
+            <Line options={options} data={data} />
             <div className="flex justify-between mt-2 text-xs text-gray-500 px-10">
               <span>&lt; 70 mg/dL: Baixa</span>
               <span>70-180 mg/dL: Normal</span>
