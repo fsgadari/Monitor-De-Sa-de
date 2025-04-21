@@ -81,31 +81,21 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
       },
       annotation: {
         annotations: {
-          linhaBaixa: {
+          line1: {
             type: 'line',
             yMin: 70,
             yMax: 70,
-            borderColor: 'rgba(234, 179, 8, 0.8)',
+            borderColor: 'rgba(34, 197, 94, 0.8)',
             borderWidth: 1,
             borderDash: [6, 6],
-            label: {
-              display: true,
-              content: '70 mg/dL',
-              position: 'end'
-            }
           },
-          linhaAlta: {
+          line2: {
             type: 'line',
             yMin: 180,
             yMax: 180,
-            borderColor: 'rgba(234, 179, 8, 0.8)',
+            borderColor: 'rgba(34, 197, 94, 0.8)',
             borderWidth: 1,
             borderDash: [6, 6],
-            label: {
-              display: true,
-              content: '180 mg/dL',
-              position: 'end'
-            }
           }
         }
       }
