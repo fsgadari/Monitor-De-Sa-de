@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  Chart as ChartJS, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Title, 
-  Tooltip, 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
   Legend,
   ChartOptions
 } from 'chart.js';
@@ -30,17 +30,16 @@ interface GlycemiaChartProps {
 }
 
 const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
-  // Filter records that have glycemia values and sort by date
   const filteredRecords = records
     .filter(record => record.glycemia !== undefined)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
-  
-  const labels = filteredRecords.map(record => 
+
+  const labels = filteredRecords.map(record =>
     format(record.date, 'dd/MM HH:mm', { locale: ptBR })
   );
-  
+
   const glycemiaData = filteredRecords.map(record => record.glycemia);
-  
+
   const data = {
     labels,
     datasets: [
@@ -60,17 +59,17 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
       }
     ]
   };
-  
+
   const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'top',
       },
       tooltip: {
         callbacks: {
-          afterLabel: function(context) {
+          afterLabel: function (context) {
             const value = context.parsed.y;
             if (value < 70) return 'Glicemia baixa';
             if (value > 180) return 'Glicemia alta';
@@ -82,11 +81,14 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
     scales: {
       y: {
         beginAtZero: false,
+        min: 40,
+        max: 300,
+        ticks: {
+          stepSize: 10,
+          precision: 0,
+        },
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
-        },
-        ticks: {
-          precision: 0,
         }
       },
       x: {
@@ -96,28 +98,30 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
       }
     }
   };
-  
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Glicemia</h3>
-      
-      <div className="h-64">
+      <div className="h-64 relative">
         {filteredRecords.length > 0 ? (
           <>
-            <div 
-              className="absolute hidden sm:block" 
+            <div
+              className="absolute inset-0 z-0"
               style={{
-                backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                height: '179px',
-                width: 'calc(100% - 8rem)',
-                marginLeft: '4rem',
-                marginTop: '30px',
-                zIndex: 1,
-                borderTop: '1px dashed rgba(34, 197, 94, 0.4)',
-                borderBottom: '1px dashed rgba(34, 197, 94, 0.4)',
+                pointerEvents: 'none',
               }}
-            />
-            <div className="relative z-10">
+            >
+              <svg width="100%" height="100%">
+                <rect
+                  x="0"
+                  y="calc((1 - ((180 - 40) / (300 - 40))) * 100%)"
+                  width="100%"
+                  height="calc(((180 - 70) / (300 - 40)) * 100%)"
+                  fill="rgba(34, 197, 94, 0.1)"
+                />
+              </svg>
+            </div>
+            <div className="relative z-10 h-full">
               <Line options={options} data={data} />
             </div>
             <div className="flex justify-between mt-2 text-xs text-gray-500 px-10">
@@ -137,4 +141,3 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
 };
 
 export default GlycemiaChart;
-
