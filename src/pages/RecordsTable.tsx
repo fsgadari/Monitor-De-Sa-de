@@ -140,7 +140,7 @@ const RecordsTable: React.FC = () => {
                             <span className="hidden sm:inline"> mmHg</span>
                           </span>
                         ) : (
-                          <span className="text-gray-400">N/A</span>
+                          <span className="text-gray-400"> </span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
@@ -156,7 +156,7 @@ const RecordsTable: React.FC = () => {
                             <span className="hidden sm:inline"> mg/dL</span>
                           </span>
                         ) : (
-                          <span className="text-gray-400">N/A</span>
+                          <span className="text-gray-400"> </span>
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -166,11 +166,11 @@ const RecordsTable: React.FC = () => {
                             <span className="hidden sm:inline"> bpm</span>
                           </>
                         ) : (
-                          <span className="text-gray-400">N/A</span>
+                          <span className="text-gray-400"> </span>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                        {record.observations || <span className="text-gray-400">N/A</span>}
+                        {record.observations || <span className="text-gray-400"> </span>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <button
