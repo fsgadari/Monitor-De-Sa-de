@@ -23,24 +23,24 @@ export const useHealth = () => {
 export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
 
-  // Carregar os dados do Firebase ao iniciar
+  // Carrega os registros do Firebase na inicialização
   useEffect(() => {
     const fetchRecords = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'healthRecords'));
-        const firebaseRecords: HealthRecord[] = [];
-        querySnapshot.forEach((docSnap) => {
+        const firebaseRecords: HealthRecord[] = querySnapshot.docs.map((docSnap) => {
           const data = docSnap.data();
-          firebaseRecords.push({
+          return {
             id: docSnap.id,
             date: new Date(data.date),
             systolic: data.systolic,
             diastolic: data.diastolic,
             glycemia: data.glycemia,
             heartRate: data.heartRate,
-            observations: data.observations
-          });
+            observations: data.observations,
+          };
         });
+
         setRecords(firebaseRecords);
       } catch (error) {
         console.error('Erro ao buscar registros do Firebase:', error);
@@ -54,9 +54,14 @@ export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       const docRef = await addDoc(collection(db, 'healthRecords'), {
         ...record,
-        date: record.date.toISOString()
+        date: record.date.toISOString(), // garante consistência no Firebase
       });
-      const newRecord: HealthRecord = { ...record, id: docRef.id };
+
+      const newRecord: HealthRecord = {
+        ...record,
+        id: docRef.id,
+      };
+
       setRecords((prev) => [newRecord, ...prev]);
     } catch (error) {
       console.error('Erro ao adicionar registro ao Firebase:', error);
@@ -73,19 +78,18 @@ export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const clearAllRecords = async () => {
-    if (
-      window.confirm('Tem certeza que deseja limpar todos os registros? Esta ação não pode ser desfeita.')
-    ) {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'healthRecords'));
-        const batchDeletions = querySnapshot.docs.map((docSnap) =>
-          deleteDoc(doc(db, 'healthRecords', docSnap.id))
-        );
-        await Promise.all(batchDeletions);
-        setRecords([]);
-      } catch (error) {
-        console.error('Erro ao limpar registros do Firebase:', error);
-      }
+    const confirm = window.confirm('Tem certeza que deseja limpar todos os registros? Esta ação não pode ser desfeita.');
+    if (!confirm) return;
+
+    try {
+      const querySnapshot = await getDocs(collection(db, 'healthRecords'));
+      const deletions = querySnapshot.docs.map((docSnap) =>
+        deleteDoc(doc(db, 'healthRecords', docSnap.id))
+      );
+      await Promise.all(deletions);
+      setRecords([]);
+    } catch (error) {
+      console.error('Erro ao limpar registros do Firebase:', error);
     }
   };
 
