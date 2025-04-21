@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HealthProvider } from './context/HealthContext';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
-import HealthForm from './pages/HealthForm';
+import { HealthForm } from './pages/HealthForm';
 import RecordsTable from './pages/RecordsTable';
 
 function App() {
