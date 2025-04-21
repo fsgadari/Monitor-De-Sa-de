@@ -7,12 +7,9 @@ import { ptBR } from 'date-fns/locale';
 import { applyDateFilter } from './dateFilters';
 
 export const generatePDF = async (records: HealthRecord[]) => {
-  const doc = new jsPDF({
-    orientation: 'landscape',
-    unit: 'mm',
-  });
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm' });
 
-  // Título e data
+  // Cabeçalho
   doc.setFontSize(20);
   doc.text('Relatório de Saúde', 15, 15);
 
@@ -20,7 +17,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
   doc.setFontSize(10);
   doc.text(`Gerado em: ${currentDate}`, 15, 22);
 
-  // Captura os gráficos da página
+  // Captura os gráficos da tela
   const captureChart = async (id: string) => {
     const el = document.getElementById(id);
     if (!el) return null;
@@ -36,12 +33,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
 
   const renderImage = (img: string | null, height: number) => {
     if (img) {
-      const pageHeight = doc.internal.pageSize.height;
-      if (y + height > pageHeight - 20) {
-        doc.addPage();
-        y = 15;
-      }
-      doc.addImage(img, 'PNG', 15, y, 85, height);
+      doc.addImage(img, 'PNG', 15, y, 90, height);
       y += height + 5;
     }
   };
@@ -50,7 +42,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
   renderImage(bpImg, 40);
   renderImage(hrImg, 40);
 
-  // Resumo
+  // Tabela de resumo
   if (records.length > 0) {
     doc.setFontSize(14);
     doc.text('Resumo', 115, 30);
@@ -118,10 +110,10 @@ export const generatePDF = async (records: HealthRecord[]) => {
       const r = sorted[data.row.index];
       if (data.section === 'body') {
         if (data.column.index === 1 && isAbnormal(r, 'bloodPressure')) {
-          data.cell.styles.textColor = [239, 68, 68]; // Vermelho
+          data.cell.styles.textColor = [239, 68, 68];
         }
         if (data.column.index === 2 && isAbnormal(r, 'glycemia')) {
-          data.cell.styles.textColor = [239, 68, 68]; // Vermelho
+          data.cell.styles.textColor = [239, 68, 68];
         }
       }
     }
