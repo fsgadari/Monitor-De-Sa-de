@@ -38,8 +38,16 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     format(record.date, 'dd/MM HH:mm', { locale: ptBR })
   );
 
-  const systolicData = filteredRecords.map(record => record.systolic);
-  const diastolicData = filteredRecords.map(record => record.diastolic);
+  const systolicData = filteredRecords.map(record => record.systolic!);
+  const diastolicData = filteredRecords.map(record => record.diastolic!);
+
+  const allValues = [...systolicData, ...diastolicData];
+  const minValue = Math.min(...allValues);
+  const maxValue = Math.max(...allValues);
+
+  // Margem de segurança no eixo Y
+  const yMin = Math.floor((minValue - 10) / 10) * 10;
+  const yMax = Math.ceil((maxValue + 10) / 10) * 10;
 
   const data = {
     labels,
@@ -75,7 +83,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
 
   const options: ChartOptions<'line'> = {
     responsive: true,
-    maintainAspectRatio: false, // libera a altura
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'top',
@@ -101,14 +109,11 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     },
     scales: {
       y: {
-        min: 40,
-        max: 200,
+        min: yMin,
+        max: yMax,
         ticks: {
           stepSize: 10,
           precision: 0,
-          callback: function (value) {
-            return value.toString();
-          }
         },
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
@@ -126,15 +131,9 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Pressão Arterial</h3>
 
-      <div className="h-[500px]"> {/* altura real para o gráfico */}
+      <div className="h-[500px]">
         {filteredRecords.length > 0 ? (
-          <>
-            <Line options={options} data={data} height={500} />
-            <div className="flex flex-col sm:flex-row justify-between mt-2 text-xs text-gray-500 px-2 sm:px-10">
-              <span>Sistólica normal: 90-139 mmHg</span>
-              <span>Diastólica normal: 60-90 mmHg</span>
-            </div>
-          </>
+          <Line options={options} data={data} height={500} />
         ) : (
           <div className="h-full flex items-center justify-center text-gray-500">
             Sem dados de pressão arterial para exibir
