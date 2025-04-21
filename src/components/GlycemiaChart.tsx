@@ -38,7 +38,7 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
     format(record.date, 'dd/MM HH:mm', { locale: ptBR })
   );
 
-  const glycemiaData = filteredRecords.map(record => record.glycemia);
+  const glycemiaData = filteredRecords.map(record => record.glycemia!);
 
   const data = {
     labels,
@@ -80,9 +80,8 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
     },
     scales: {
       y: {
-        beginAtZero: false,
         min: 40,
-        max: 300,
+        max: Math.max(300, Math.max(...glycemiaData) + 20),
         ticks: {
           stepSize: 10,
           precision: 0,
@@ -114,9 +113,9 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
               <svg width="100%" height="100%">
                 <rect
                   x="0"
-                  y="calc((1 - ((180 - 40) / (300 - 40))) * 100%)"
+                  y={`${100 - ((180 - 40) / (options.scales?.y?.max! - 40)) * 100}%`}
+                  height={`${((180 - 70) / (options.scales?.y?.max! - 40)) * 100}%`}
                   width="100%"
-                  height="calc(((180 - 70) / (300 - 40)) * 100%)"
                   fill="rgba(34, 197, 94, 0.1)"
                 />
               </svg>
