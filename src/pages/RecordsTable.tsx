@@ -14,7 +14,10 @@ const RecordsTable: React.FC = () => {
   const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'last30days' });
 
   const filteredRecords = applyDateFilter(records, dateFilter);
-  const sortedRecords = [...filteredRecords].sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const sortedRecords = [...filteredRecords].sort((a, b) =>
+    b.date.getTime() - a.date.getTime()
+  );
 
   const handleDelete = (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir este registro?')) {
@@ -63,9 +66,7 @@ const RecordsTable: React.FC = () => {
 
       {records.length === 0 ? (
         <div className="bg-white p-8 rounded-lg shadow-sm text-center">
-          <div className="text-gray-500 mb-4">
-            Nenhum registro de saúde encontrado
-          </div>
+          <div className="text-gray-500 mb-4">Nenhum registro de saúde encontrado</div>
           <Link
             to="/form"
             className="inline-flex items-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200"
@@ -97,12 +98,24 @@ const RecordsTable: React.FC = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data/Hora</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pressão Arterial</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Glicemia</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Freq. Cardíaca</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Data/Hora
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Pressão Arterial
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Glicemia
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Freq. Cardíaca
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Observações
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Ações
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -110,13 +123,80 @@ const RecordsTable: React.FC = () => {
                     <tr key={record.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <span className="block sm:hidden">{format(record.date, 'dd/MM HH:mm')}</span>
-                        <span className="hidden sm:block">{format(record.date, 'dd/MM/yyyy HH:mm', { locale: ptBR })}</span>
+                        <span className="hidden sm:block">
+                          {format(record.date, 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {record.systolic && record.diastolic ? (
-                          <span className={isBloodPressureAbnormal(record.systolic, record.diastolic) ? 'text-red-600 font-medium' : 'text-gray-900'}>
+                          <span
+                            className={
+                              isBloodPressureAbnormal(record.systolic, record.diastolic)
+                                ? 'text-red-600 font-medium'
+                                : 'text-gray-900'
+                            }
+                          >
                             {record.systolic}/{record.diastolic}
                             <span className="hidden sm:inline"> mmHg</span>
                           </span>
                         ) : (
-                          <span className="text-gray-400">N/A</span
+                          <span className="text-gray-400">N/A</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {record.glycemia !== undefined ? (
+                          <span
+                            className={
+                              isGlycemiaAbnormal(record.glycemia)
+                                ? 'text-red-600 font-medium'
+                                : 'text-gray-900'
+                            }
+                          >
+                            {record.glycemia}
+                            <span className="hidden sm:inline"> mg/dL</span>
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">N/A</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {record.heartRate !== undefined ? (
+                          <>
+                            {record.heartRate}
+                            <span className="hidden sm:inline"> bpm</span>
+                          </>
+                        ) : (
+                          <span className="text-gray-400">N/A</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                        {record.observations || <span className="text-gray-400">N/A</span>}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={() => handleDelete(record.id)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Excluir registro"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {sortedRecords.length === 0 && (
+              <div className="p-8 text-center text-gray-500">
+                Nenhum registro encontrado para o período selecionado
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default RecordsTable;
