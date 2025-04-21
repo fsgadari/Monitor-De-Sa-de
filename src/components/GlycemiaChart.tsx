@@ -135,3 +135,6 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
     </div>
   );
 };
+
+export default GlycemiaChart;
+
