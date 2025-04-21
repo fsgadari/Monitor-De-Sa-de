@@ -8,6 +8,7 @@ import { DateFilter } from '../types';
 import { applyDateFilter } from '../utils/dateFilters';
 import { Link } from 'react-router-dom';
 import { PlusCircle, ListPlus } from 'lucide-react';
+import { generatePDF } from '../utils/pdfGenerator';
 
 const Dashboard: React.FC = () => {
   const { records } = useHealth();
@@ -58,13 +59,20 @@ const Dashboard: React.FC = () => {
             <HeartRateChart records={filteredRecords} />
           </div>
 
-          <div className="text-center mt-6">
+          <div className="text-center mt-6 space-y-3">
             <Link
               to="/records"
-              className="text-blue-600 hover:text-blue-800 font-medium"
+              className="text-blue-600 hover:text-blue-800 font-medium block"
             >
               Ver tabela completa de registros →
             </Link>
+
+            <button
+              onClick={() => generatePDF(records)}
+              className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200"
+            >
+              Gerar PDF com Gráficos
+            </button>
           </div>
         </>
       )}
