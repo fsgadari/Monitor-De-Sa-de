@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHealth } from '../context/HealthContext';
+import { toast } from 'sonner';
 
 const HealthForm: React.FC = () => {
   const { addRecord } = useHealth();
@@ -14,14 +15,12 @@ const HealthForm: React.FC = () => {
     return now.toISOString().substring(0, 16);
   });
 
-  const [successMessage, setSuccessMessage] = useState('');
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const parsedDate = new Date(date);
     if (isNaN(parsedDate.getTime())) {
-      alert('Data inválida.');
+      toast.error('Data inválida.');
       return;
     }
 
@@ -42,19 +41,13 @@ const HealthForm: React.FC = () => {
     setObservations('');
     setDate(new Date().toISOString().substring(0, 16));
 
-    // Exibir mensagem de sucesso
-    setSuccessMessage('Registro salvo com sucesso!');
-    setTimeout(() => setSuccessMessage(''), 3000);
+    // Mostrar toast de sucesso
+    toast.success('Registro salvo com sucesso!');
   };
 
   return (
     <div className="max-w-md mx-auto p-4">
       <h2 className="text-xl font-semibold mb-4">Novo Registro de Saúde</h2>
-      {successMessage && (
-        <div className="mb-4 p-2 bg-green-100 text-green-800 rounded">
-          {successMessage}
-        </div>
-      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-1">Pressão Sistólica (mmHg)</label>
