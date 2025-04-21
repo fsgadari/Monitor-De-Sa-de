@@ -30,18 +30,17 @@ interface BloodPressureChartProps {
 }
 
 const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
-  // Filter records that have blood pressure values and sort by date
   const filteredRecords = records
     .filter(record => record.systolic !== undefined && record.diastolic !== undefined)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
-  
+
   const labels = filteredRecords.map(record => 
     format(record.date, 'dd/MM HH:mm', { locale: ptBR })
   );
-  
+
   const systolicData = filteredRecords.map(record => record.systolic);
   const diastolicData = filteredRecords.map(record => record.diastolic);
-  
+
   const data = {
     labels,
     datasets: [
@@ -75,25 +74,25 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
       }
     ]
   };
-  
+
   const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top' as const,
+        position: 'top',
       },
       tooltip: {
         callbacks: {
           afterLabel: function(context) {
             const datasetIndex = context.datasetIndex;
             const value = context.parsed.y;
-            
-            if (datasetIndex === 0) { // Systolic
+
+            if (datasetIndex === 0) {
               if (value < 90) return 'Pressão sistólica baixa';
               if (value > 139) return 'Pressão sistólica alta';
               return 'Pressão sistólica normal';
-            } else { // Diastolic
+            } else {
               if (value < 60) return 'Pressão diastólica baixa';
               if (value > 90) return 'Pressão diastólica alta';
               return 'Pressão diastólica normal';
@@ -106,11 +105,13 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
       y: {
         beginAtZero: false,
         min: 40,
+        max: Math.max(180, ...systolicData, ...diastolicData) + 10,
+        ticks: {
+          stepSize: 10,
+          precision: 0,
+        },
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
-        },
-        ticks: {
-          precision: 0,
         }
       },
       x: {
@@ -120,11 +121,11 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
       }
     }
   };
-  
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Pressão Arterial</h3>
-      
+
       <div className="h-64">
         {filteredRecords.length > 0 ? (
           <>
