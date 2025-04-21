@@ -1,12 +1,12 @@
 import React from 'react';
-import { 
-  Chart as ChartJS, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Title, 
-  Tooltip, 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
   Legend,
   ChartOptions
 } from 'chart.js';
@@ -30,17 +30,16 @@ interface HeartRateChartProps {
 }
 
 const HeartRateChart: React.FC<HeartRateChartProps> = ({ records }) => {
-  // Filter records that have heart rate values and sort by date
   const filteredRecords = records
     .filter(record => record.heartRate !== undefined)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
-  
-  const labels = filteredRecords.map(record => 
+
+  const labels = filteredRecords.map(record =>
     format(record.date, 'dd/MM HH:mm', { locale: ptBR })
   );
-  
+
   const heartRateData = filteredRecords.map(record => record.heartRate);
-  
+
   const data = {
     labels,
     datasets: [
@@ -55,37 +54,28 @@ const HeartRateChart: React.FC<HeartRateChartProps> = ({ records }) => {
       }
     ]
   };
-  
+
   const options: ChartOptions<'line'> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top' as const,
-      }
+      legend: { position: 'top' }
     },
     scales: {
       y: {
         beginAtZero: false,
-        grid: {
-          color: 'rgba(0, 0, 0, 0.05)',
-        },
-        ticks: {
-          precision: 0,
-        }
+        ticks: { precision: 0 },
+        grid: { color: 'rgba(0, 0, 0, 0.05)' }
       },
       x: {
-        grid: {
-          display: false,
-        }
+        grid: { display: false }
       }
     }
   };
-  
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Frequência Cardíaca</h3>
-      
       <div className="h-64">
         {filteredRecords.length > 0 ? (
           <Line options={options} data={data} />
