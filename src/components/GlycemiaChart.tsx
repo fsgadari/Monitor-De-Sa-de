@@ -10,6 +10,7 @@ import {
   Legend,
   ChartOptions
 } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import { Line } from 'react-chartjs-2';
 import { HealthRecord } from '../types';
 import { format } from 'date-fns';
@@ -22,7 +23,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  annotationPlugin
 );
 
 interface GlycemiaChartProps {
@@ -76,6 +78,36 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
             return 'Glicemia normal';
           }
         }
+      },
+      annotation: {
+        annotations: {
+          linhaBaixa: {
+            type: 'line',
+            yMin: 70,
+            yMax: 70,
+            borderColor: 'rgba(234, 179, 8, 0.8)',
+            borderWidth: 1,
+            borderDash: [6, 6],
+            label: {
+              display: true,
+              content: '70 mg/dL',
+              position: 'end'
+            }
+          },
+          linhaAlta: {
+            type: 'line',
+            yMin: 180,
+            yMax: 180,
+            borderColor: 'rgba(234, 179, 8, 0.8)',
+            borderWidth: 1,
+            borderDash: [6, 6],
+            label: {
+              display: true,
+              content: '180 mg/dL',
+              position: 'end'
+            }
+          }
+        }
       }
     },
     scales: {
@@ -89,10 +121,6 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
           drawBorder: true
-        },
-        afterBuildTicks: (axis) => {
-          axis.ticks.push({ value: 70, major: true });
-          axis.ticks.push({ value: 180, major: true });
         }
       },
       x: {
@@ -106,38 +134,6 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
         borderWidth: 2
       }
     },
-  };
-
-  // Adicionando linhas pontilhadas no y = 70 e y = 180
-  (options as any).plugins.annotation = {
-    annotations: {
-      line1: {
-        type: 'line',
-        yMin: 70,
-        yMax: 70,
-        borderColor: 'rgba(234, 179, 8, 0.8)',
-        borderWidth: 1,
-        borderDash: [6, 6],
-        label: {
-          display: true,
-          content: '70 mg/dL',
-          position: 'end'
-        }
-      },
-      line2: {
-        type: 'line',
-        yMin: 180,
-        yMax: 180,
-        borderColor: 'rgba(234, 179, 8, 0.8)',
-        borderWidth: 1,
-        borderDash: [6, 6],
-        label: {
-          display: true,
-          content: '180 mg/dL',
-          position: 'end'
-        }
-      }
-    }
   };
 
   return (
