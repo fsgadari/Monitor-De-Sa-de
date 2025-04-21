@@ -23,7 +23,7 @@ export const useHealth = () => {
 export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [records, setRecords] = useState<HealthRecord[]>([]);
 
-  // Carrega os registros do Firebase na inicialização
+  // Carrega registros do Firebase ao iniciar
   useEffect(() => {
     const fetchRecords = async () => {
       try {
@@ -32,15 +32,14 @@ export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           const data = docSnap.data();
           return {
             id: docSnap.id,
-            date: new Date(data.date),
-            systolic: data.systolic,
-            diastolic: data.diastolic,
-            glycemia: data.glycemia,
-            heartRate: data.heartRate,
-            observations: data.observations,
+            date: new Date(data.date), // transforma string ISO em Date
+            systolic: data.systolic || null,
+            diastolic: data.diastolic || null,
+            glycemia: data.glycemia || null,
+            heartRate: data.heartRate || null,
+            observations: data.observations || ''
           };
         });
-
         setRecords(firebaseRecords);
       } catch (error) {
         console.error('Erro ao buscar registros do Firebase:', error);
@@ -54,12 +53,12 @@ export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     try {
       const docRef = await addDoc(collection(db, 'healthRecords'), {
         ...record,
-        date: record.date.toISOString(), // garante consistência no Firebase
+        date: record.date.toISOString() // salva como string ISO
       });
 
       const newRecord: HealthRecord = {
         ...record,
-        id: docRef.id,
+        id: docRef.id
       };
 
       setRecords((prev) => [newRecord, ...prev]);
@@ -78,8 +77,8 @@ export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const clearAllRecords = async () => {
-    const confirm = window.confirm('Tem certeza que deseja limpar todos os registros? Esta ação não pode ser desfeita.');
-    if (!confirm) return;
+    const confirmClear = window.confirm('Tem certeza que deseja limpar todos os registros? Esta ação não pode ser desfeita.');
+    if (!confirmClear) return;
 
     try {
       const querySnapshot = await getDocs(collection(db, 'healthRecords'));
