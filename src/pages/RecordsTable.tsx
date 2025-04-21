@@ -7,17 +7,13 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Trash2, FilePlus, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { generatePDF } from '../utils/pdfGenerator';
 
 const RecordsTable: React.FC = () => {
   const { records, deleteRecord, clearAllRecords } = useHealth();
   const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'last30days' });
 
   const filteredRecords = applyDateFilter(records, dateFilter);
-
-  const sortedRecords = [...filteredRecords].sort((a, b) =>
-    b.date.getTime() - a.date.getTime()
-  );
+  const sortedRecords = [...filteredRecords].sort((a, b) => b.date.getTime() - a.date.getTime());
 
   const handleDelete = (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir este registro?')) {
@@ -25,7 +21,9 @@ const RecordsTable: React.FC = () => {
     }
   };
 
-  const handleGeneratePDF = () => {
+  const handleGeneratePDF = async () => {
+    await new Promise(resolve => setTimeout(resolve, 500)); // aguarda o DOM atualizar
+    const { generatePDF } = await import('../utils/pdfGenerator');
     generatePDF(records);
   };
 
@@ -98,24 +96,12 @@ const RecordsTable: React.FC = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Data/Hora
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Pressão Arterial
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Glicemia
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Freq. Cardíaca
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Observações
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Ações
-                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data/Hora</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pressão Arterial</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Glicemia</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Freq. Cardíaca</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
