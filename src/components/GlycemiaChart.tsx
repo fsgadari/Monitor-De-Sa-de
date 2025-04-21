@@ -88,11 +88,53 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
         },
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
+          drawBorder: true
+        },
+        afterBuildTicks: (axis) => {
+          axis.ticks.push({ value: 70, major: true });
+          axis.ticks.push({ value: 180, major: true });
         }
       },
       x: {
         grid: {
           display: false,
+        }
+      }
+    },
+    elements: {
+      line: {
+        borderWidth: 2
+      }
+    },
+  };
+
+  // Adicionando linhas pontilhadas no y = 70 e y = 180
+  (options as any).plugins.annotation = {
+    annotations: {
+      line1: {
+        type: 'line',
+        yMin: 70,
+        yMax: 70,
+        borderColor: 'rgba(234, 179, 8, 0.8)',
+        borderWidth: 1,
+        borderDash: [6, 6],
+        label: {
+          display: true,
+          content: '70 mg/dL',
+          position: 'end'
+        }
+      },
+      line2: {
+        type: 'line',
+        yMin: 180,
+        yMax: 180,
+        borderColor: 'rgba(234, 179, 8, 0.8)',
+        borderWidth: 1,
+        borderDash: [6, 6],
+        label: {
+          display: true,
+          content: '180 mg/dL',
+          position: 'end'
         }
       }
     }
@@ -103,32 +145,7 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Glicemia</h3>
       <div className="h-64 relative">
         {filteredRecords.length > 0 ? (
-          <>
-            <div
-              className="absolute inset-0 z-0"
-              style={{
-                pointerEvents: 'none',
-              }}
-            >
-              <svg width="100%" height="100%">
-                <rect
-                  x="0"
-                  y={`${100 - ((180 - 40) / (options.scales?.y?.max! - 40)) * 100}%`}
-                  height={`${((180 - 70) / (options.scales?.y?.max! - 40)) * 100}%`}
-                  width="100%"
-                  fill="rgba(34, 197, 94, 0.1)"
-                />
-              </svg>
-            </div>
-            <div className="relative z-10 h-full">
-              <Line options={options} data={data} />
-            </div>
-            <div className="flex justify-between mt-2 text-xs text-gray-500 px-10">
-              <span>&lt; 70 mg/dL: Baixa</span>
-              <span>70-180 mg/dL: Normal</span>
-              <span>&gt; 180 mg/dL: Alta</span>
-            </div>
-          </>
+          <Line options={options} data={data} />
         ) : (
           <div className="h-full flex items-center justify-center text-gray-500">
             Sem dados de glicemia para exibir
