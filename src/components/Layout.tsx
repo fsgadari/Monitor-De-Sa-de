@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { BarChart3, FilePlus, ListChecks, Home } from 'lucide-react';
+import { FilePlus, ListChecks, Home } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -25,7 +25,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
 
-      {/* AQUI está o z-50 adicionado para evitar que os gráficos sobreponham */}
       <nav className="bg-white border-t border-gray-200 fixed bottom-0 w-full shadow-lg z-50">
         <div className="container mx-auto px-4">
           <ul className="flex justify-around">
@@ -66,4 +65,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </nav>
 
-      {/
+      {/* Espaço para a navegação fixa não cobrir conteúdo */}
+      <div className="h-20"></div>
+    </div>
+  );
+};
+
+export default Layout;
