@@ -8,7 +8,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
-  
+
   const isActive = (path: string) => {
     return location.pathname === path;
   };
@@ -20,12 +20,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <h1 className="text-2xl font-bold">Monitoramento de Saúde</h1>
         </div>
       </header>
-      
+
       <main className="flex-grow container mx-auto p-4 md:p-6">
         {children}
       </main>
-      
-      <nav className="bg-white border-t border-gray-200 fixed bottom-0 w-full shadow-lg">
+
+      {/* AQUI está o z-50 adicionado para evitar que os gráficos sobreponham */}
+      <nav className="bg-white border-t border-gray-200 fixed bottom-0 w-full shadow-lg z-50">
         <div className="container mx-auto px-4">
           <ul className="flex justify-around">
             <li className="flex-1">
@@ -64,11 +65,5 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </ul>
         </div>
       </nav>
-      
-      {/* Spacer for fixed bottom nav */}
-      <div className="h-20"></div>
-    </div>
-  );
-};
 
-export default Layout;
+      {/
