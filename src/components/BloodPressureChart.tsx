@@ -52,7 +52,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
         pointBackgroundColor: filteredRecords.map(record =>
           record.systolic! < 90 || record.systolic! > 139
             ? 'rgba(239, 68, 68, 0.9)'
-            : 'rgba(34, 197, 94, 0.9)' // verde quando normal
+            : 'rgba(34, 197, 94, 0.9)'
         ),
         pointRadius: 5,
         tension: 0.1,
@@ -65,7 +65,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
         pointBackgroundColor: filteredRecords.map(record =>
           record.diastolic! < 60 || record.diastolic! > 90
             ? 'rgba(239, 68, 68, 0.9)'
-            : 'rgba(34, 197, 94, 0.9)' // verde quando normal
+            : 'rgba(34, 197, 94, 0.9)'
         ),
         pointRadius: 5,
         tension: 0.1,
@@ -75,7 +75,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
 
   const options: ChartOptions<'line'> = {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: false, // libera a altura
     plugins: {
       legend: {
         position: 'top',
@@ -101,22 +101,13 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     },
     scales: {
       y: {
-        beginAtZero: false,
         min: 40,
         max: 200,
         ticks: {
           stepSize: 10,
           precision: 0,
           callback: function (value) {
-            if (
-              value >= 70 && value <= 150
-            ) {
-              return value.toString();
-            }
-            if (value % 20 === 0) {
-              return value.toString();
-            }
-            return '';
+            return value.toString();
           }
         },
         grid: {
@@ -135,12 +126,10 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Pressão Arterial</h3>
 
-      <div className="h-96"> {/* Altura aumentada */}
+      <div className="h-[500px]"> {/* altura real para o gráfico */}
         {filteredRecords.length > 0 ? (
           <>
-            <div className="relative z-10">
-              <Line options={options} data={data} />
-            </div>
+            <Line options={options} data={data} height={500} />
             <div className="flex flex-col sm:flex-row justify-between mt-2 text-xs text-gray-500 px-2 sm:px-10">
               <span>Sistólica normal: 90-139 mmHg</span>
               <span>Diastólica normal: 60-90 mmHg</span>
