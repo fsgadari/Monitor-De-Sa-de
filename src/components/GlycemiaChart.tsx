@@ -57,7 +57,7 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
             : 'rgba(34, 197, 94, 0.8)';
         }),
         pointRadius: 5,
-        tension: 0.1,
+        tension: 0.3,
       },
     ],
   };
@@ -81,20 +81,20 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
       },
       annotation: {
         annotations: {
-          range: {
+          faixaVerde: {
             type: 'box',
             yMin: 70,
             yMax: 180,
             backgroundColor: 'rgba(34, 197, 94, 0.1)',
-            borderWidth: 1,
             borderColor: 'rgba(34, 197, 94, 0.4)',
+            borderWidth: 1,
           },
         },
       },
     },
     scales: {
       y: {
-        suggestedMin: 40,
+        suggestedMin: 50,
         suggestedMax: 250,
         ticks: {
           stepSize: 20,
@@ -105,6 +105,12 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
         },
       },
       x: {
+        ticks: {
+          maxRotation: 45,
+          minRotation: 0,
+          autoSkip: true,
+          maxTicksLimit: 10,
+        },
         grid: {
           display: false,
         },
@@ -115,11 +121,11 @@ const GlycemiaChart: React.FC<GlycemiaChartProps> = ({ records }) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Glicemia</h3>
-      <div className="h-64 relative">
+      <div className="h-[300px] sm:h-[350px] relative">
         {filteredRecords.length > 0 ? (
           <>
             <Line options={options} data={data} />
-            <div className="flex justify-between mt-2 text-xs text-gray-500 px-10">
+            <div className="flex justify-between mt-2 text-xs text-gray-500 px-4">
               <span>&lt; 70 mg/dL: Baixa</span>
               <span>70-180 mg/dL: Normal</span>
               <span>&gt; 180 mg/dL: Alta</span>
