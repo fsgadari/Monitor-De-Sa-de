@@ -36,6 +36,11 @@ export const generatePDF = async (records: HealthRecord[]) => {
 
   const renderImage = (img: string | null, height: number) => {
     if (img) {
+      const pageHeight = doc.internal.pageSize.height;
+      if (y + height > pageHeight - 20) {
+        doc.addPage();
+        y = 15;
+      }
       doc.addImage(img, 'PNG', 15, y, 85, height);
       y += height + 5;
     }
@@ -113,10 +118,10 @@ export const generatePDF = async (records: HealthRecord[]) => {
       const r = sorted[data.row.index];
       if (data.section === 'body') {
         if (data.column.index === 1 && isAbnormal(r, 'bloodPressure')) {
-          data.cell.styles.textColor = [239, 68, 68];
+          data.cell.styles.textColor = [239, 68, 68]; // Vermelho
         }
         if (data.column.index === 2 && isAbnormal(r, 'glycemia')) {
-          data.cell.styles.textColor = [239, 68, 68];
+          data.cell.styles.textColor = [239, 68, 68]; // Vermelho
         }
       }
     }
