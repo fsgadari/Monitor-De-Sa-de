@@ -104,9 +104,9 @@ export const generatePDF = (records: HealthRecord[]) => {
     format(record.date, 'dd/MM/yyyy HH:mm', { locale: ptBR }),
     record.systolic && record.diastolic 
       ? `${record.systolic}/${record.diastolic}`
-      : 'N/A',
-    record.glycemia !== undefined ? record.glycemia : 'N/A',
-    record.heartRate !== undefined ? record.heartRate : 'N/A',
+      : ' ',
+    record.glycemia !== undefined ? record.glycemia : '',
+    record.heartRate !== undefined ? record.heartRate : ' ',
     record.observations || ''
   ]);
   
