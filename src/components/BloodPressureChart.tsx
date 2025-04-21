@@ -102,20 +102,18 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     scales: {
       y: {
         beginAtZero: false,
-        suggestedMin: 60,
-        suggestedMax: 180,
+        min: 40,
+        max: 200,
         ticks: {
-          precision: 0,
           stepSize: 10,
+          precision: 0,
           callback: function (value) {
             if (
-              value === 70 || value === 75 || value === 80 || value === 85 || value === 90 ||
-              value === 100 || value === 110 || value === 120 || value === 130 ||
-              value === 140 || value === 150
+              value >= 70 && value <= 150
             ) {
               return value.toString();
             }
-            if (value % 20 === 0 && (value < 70 || value > 150)) {
+            if (value % 20 === 0) {
               return value.toString();
             }
             return '';
@@ -137,7 +135,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
       <h3 className="text-lg font-medium text-gray-800 mb-4">Gráfico de Pressão Arterial</h3>
 
-      <div className="h-64">
+      <div className="h-96"> {/* Altura aumentada */}
         {filteredRecords.length > 0 ? (
           <>
             <div className="relative z-10">
