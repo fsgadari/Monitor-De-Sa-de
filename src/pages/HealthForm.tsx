@@ -1,73 +1,119 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { HealthRecord } from '../types';
+import React, { useState } from 'react';
+import { useHealth } from '../context/HealthContext';
 
-interface HealthContextType {
-  records: HealthRecord[];
-  addRecord: (record: Omit<HealthRecord, 'id'>) => void;
-  deleteRecord: (id: string) => void;
-  clearAllRecords: () => void;
-}
+const HealthForm: React.FC = () => {
+  const { addRecord } = useHealth();
 
-const HealthContext = createContext<HealthContextType | undefined>(undefined);
+  const [systolic, setSystolic] = useState('');
+  const [diastolic, setDiastolic] = useState('');
+  const [glucose, setGlucose] = useState('');
+  const [heartRate, setHeartRate] = useState('');
+  const [notes, setNotes] = useState('');
+  const [date, setDate] = useState(() => {
+    const now = new Date();
+    const iso = now.toISOString();
+    return iso.substring(0, 16); // yyyy-MM-ddTHH:mm
+  });
 
-export const useHealth = () => {
-  const context = useContext(HealthContext);
-  if (!context) {
-    throw new Error('useHealth must be used within a HealthProvider');
-  }
-  return context;
-};
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-export const HealthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [records, setRecords] = useState<HealthRecord[]>([]);
-
-  // Carrega os dados do localStorage uma vez, ao montar
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedRecords = localStorage.getItem('healthRecords');
-      if (savedRecords) {
-        try {
-          const parsed = JSON.parse(savedRecords);
-          const recordsParsed = parsed.map((record: any) => ({
-            ...record,
-            date: new Date(record.date)
-          }));
-          setRecords(recordsParsed);
-        } catch (e) {
-          console.error('Erro ao carregar os registros do localStorage:', e);
-        }
-      }
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      alert('Data inválida.');
+      return;
     }
-  }, []);
 
-  // Salva os dados sempre que records mudar
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('healthRecords', JSON.stringify(records));
-    }
-  }, [records]);
+    addRecord({
+      systolic: systolic ? parseInt(systolic) : undefined,
+      diastolic: diastolic ? parseInt(diastolic) : undefined,
+      glucose: glucose ? parseInt(glucose) : undefined,
+      heartRate: heartRate ? parseInt(heartRate) : undefined,
+      notes,
+      date: parsedDate,
+    });
 
-  const addRecord = (record: Omit<HealthRecord, 'id'>) => {
-    const newRecord: HealthRecord = {
-      ...record,
-      id: crypto.randomUUID()
-    };
-    setRecords(prev => [newRecord, ...prev]);
-  };
-
-  const deleteRecord = (id: string) => {
-    setRecords(prev => prev.filter(record => record.id !== id));
-  };
-
-  const clearAllRecords = () => {
-    if (window.confirm('Tem certeza que deseja limpar todos os registros? Esta ação não pode ser desfeita.')) {
-      setRecords([]);
-    }
+    // Limpar formulário
+    setSystolic('');
+    setDiastolic('');
+    setGlucose('');
+    setHeartRate('');
+    setNotes('');
+    setDate(new Date().toISOString().substring(0, 16));
   };
 
   return (
-    <HealthContext.Provider value={{ records, addRecord, deleteRecord, clearAllRecords }}>
-      {children}
-    </HealthContext.Provider>
+    <div className="max-w-md mx-auto p-4">
+      <h2 className="text-xl font-semibold mb-4">Novo Registro de Saúde</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block mb-1">Pressão Sistólica (mmHg)</label>
+          <input
+            type="number"
+            value={systolic}
+            onChange={(e) => setSystolic(e.target.value)}
+            className="w-full p-2 border rounded"
+            placeholder="Ex: 120"
+          />
+        </div>
+        <div>
+          <label className="block mb-1">Pressão Diastólica (mmHg)</label>
+          <input
+            type="number"
+            value={diastolic}
+            onChange={(e) => setDiastolic(e.target.value)}
+            className="w-full p-2 border rounded"
+            placeholder="Ex: 80"
+          />
+        </div>
+        <div>
+          <label className="block mb-1">Glicemia (mg/dL)</label>
+          <input
+            type="number"
+            value={glucose}
+            onChange={(e) => setGlucose(e.target.value)}
+            className="w-full p-2 border rounded"
+            placeholder="Ex: 95"
+          />
+        </div>
+        <div>
+          <label className="block mb-1">Batimentos Cardíacos (bpm)</label>
+          <input
+            type="number"
+            value={heartRate}
+            onChange={(e) => setHeartRate(e.target.value)}
+            className="w-full p-2 border rounded"
+            placeholder="Ex: 72"
+          />
+        </div>
+        <div>
+          <label className="block mb-1">Observações</label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="w-full p-2 border rounded"
+            rows={3}
+            placeholder="Ex: Após o almoço, dor de cabeça leve..."
+          />
+        </div>
+        <div>
+          <label className="block mb-1">Data e Hora</label>
+          <input
+            type="datetime-local"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+        >
+          Salvar Registro
+        </button>
+      </form>
+    </div>
   );
 };
+
+export default HealthForm;
