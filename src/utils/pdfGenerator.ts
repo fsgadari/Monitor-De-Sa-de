@@ -31,49 +31,49 @@ export const generatePDF = (records: HealthRecord[]) => {
     const allGlycemiaValues = allGlycemiaRecords.map(r => r.glycemia as number);
     const averageGlycemia = allGlycemiaValues.length 
       ? (allGlycemiaValues.reduce((a, b) => a + b, 0) / allGlycemiaValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
       
     const last7DaysGlycemiaRecords = lastSevenDaysRecords.filter(r => r.glycemia !== undefined);
     const last7DaysGlycemiaValues = last7DaysGlycemiaRecords.map(r => r.glycemia as number);
     const last7DaysAverageGlycemia = last7DaysGlycemiaValues.length 
       ? (last7DaysGlycemiaValues.reduce((a, b) => a + b, 0) / last7DaysGlycemiaValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
     
     const allSystolicRecords = records.filter(r => r.systolic !== undefined);
     const allSystolicValues = allSystolicRecords.map(r => r.systolic as number);
     const averageSystolic = allSystolicValues.length 
       ? (allSystolicValues.reduce((a, b) => a + b, 0) / allSystolicValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
       
     const last7DaysSystolicRecords = lastSevenDaysRecords.filter(r => r.systolic !== undefined);
     const last7DaysSystolicValues = last7DaysSystolicRecords.map(r => r.systolic as number);
     const last7DaysAverageSystolic = last7DaysSystolicValues.length 
       ? (last7DaysSystolicValues.reduce((a, b) => a + b, 0) / last7DaysSystolicValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
     
     const allDiastolicRecords = records.filter(r => r.diastolic !== undefined);
     const allDiastolicValues = allDiastolicRecords.map(r => r.diastolic as number);
     const averageDiastolic = allDiastolicValues.length 
       ? (allDiastolicValues.reduce((a, b) => a + b, 0) / allDiastolicValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
       
     const last7DaysDiastolicRecords = lastSevenDaysRecords.filter(r => r.diastolic !== undefined);
     const last7DaysDiastolicValues = last7DaysDiastolicRecords.map(r => r.diastolic as number);
     const last7DaysAverageDiastolic = last7DaysDiastolicValues.length 
       ? (last7DaysDiastolicValues.reduce((a, b) => a + b, 0) / last7DaysDiastolicValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
       
     const allHeartRateRecords = records.filter(r => r.heartRate !== undefined);
     const allHeartRateValues = allHeartRateRecords.map(r => r.heartRate as number);
     const averageHeartRate = allHeartRateValues.length 
       ? (allHeartRateValues.reduce((a, b) => a + b, 0) / allHeartRateValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
       
     const last7DaysHeartRateRecords = lastSevenDaysRecords.filter(r => r.heartRate !== undefined);
     const last7DaysHeartRateValues = last7DaysHeartRateRecords.map(r => r.heartRate as number);
     const last7DaysAverageHeartRate = last7DaysHeartRateValues.length 
       ? (last7DaysHeartRateValues.reduce((a, b) => a + b, 0) / last7DaysHeartRateValues.length).toFixed(1)
-      : 'N/A';
+      : ' ';
     
     const summaryData = [
       ['Glicemia (mg/dL)', averageGlycemia, last7DaysAverageGlycemia],
