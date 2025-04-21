@@ -1,14 +1,14 @@
 import React from 'react';
-import { 
-  Chart as ChartJS, 
-  CategoryScale, 
-  LinearScale, 
-  PointElement, 
-  LineElement, 
-  Title, 
-  Tooltip, 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
   Legend,
-  ChartOptions
+  ChartOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { HealthRecord } from '../types';
@@ -34,7 +34,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     .filter(record => record.systolic !== undefined && record.diastolic !== undefined)
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
-  const labels = filteredRecords.map(record => 
+  const labels = filteredRecords.map(record =>
     format(record.date, 'dd/MM HH:mm', { locale: ptBR })
   );
 
@@ -49,12 +49,11 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
         data: systolicData,
         borderColor: 'rgb(239, 68, 68)',
         backgroundColor: 'rgba(239, 68, 68, 0.5)',
-        pointBackgroundColor: filteredRecords.map(record => {
-          if (record.systolic === undefined) return 'rgba(239, 68, 68, 0.5)';
-          return record.systolic < 90 || record.systolic > 139
+        pointBackgroundColor: filteredRecords.map(record =>
+          record.systolic! < 90 || record.systolic! > 139
             ? 'rgba(239, 68, 68, 0.9)'
-            : 'rgba(239, 68, 68, 0.5)';
-        }),
+            : 'rgba(34, 197, 94, 0.9)' // verde quando normal
+        ),
         pointRadius: 5,
         tension: 0.1,
       },
@@ -63,12 +62,11 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
         data: diastolicData,
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.5)',
-        pointBackgroundColor: filteredRecords.map(record => {
-          if (record.diastolic === undefined) return 'rgba(59, 130, 246, 0.5)';
-          return record.diastolic < 60 || record.diastolic > 90
+        pointBackgroundColor: filteredRecords.map(record =>
+          record.diastolic! < 60 || record.diastolic! > 90
             ? 'rgba(239, 68, 68, 0.9)'
-            : 'rgba(59, 130, 246, 0.5)';
-        }),
+            : 'rgba(34, 197, 94, 0.9)' // verde quando normal
+        ),
         pointRadius: 5,
         tension: 0.1,
       }
@@ -84,7 +82,7 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
       },
       tooltip: {
         callbacks: {
-          afterLabel: function(context) {
+          afterLabel: function (context) {
             const datasetIndex = context.datasetIndex;
             const value = context.parsed.y;
 
@@ -104,11 +102,24 @@ const BloodPressureChart: React.FC<BloodPressureChartProps> = ({ records }) => {
     scales: {
       y: {
         beginAtZero: false,
-        min: 40,
-        max: Math.max(180, ...systolicData, ...diastolicData) + 10,
+        suggestedMin: 60,
+        suggestedMax: 180,
         ticks: {
-          stepSize: 10,
           precision: 0,
+          stepSize: 10,
+          callback: function (value) {
+            if (
+              value === 70 || value === 75 || value === 80 || value === 85 || value === 90 ||
+              value === 100 || value === 110 || value === 120 || value === 130 ||
+              value === 140 || value === 150
+            ) {
+              return value.toString();
+            }
+            if (value % 20 === 0 && (value < 70 || value > 150)) {
+              return value.toString();
+            }
+            return '';
+          }
         },
         grid: {
           color: 'rgba(0, 0, 0, 0.05)',
