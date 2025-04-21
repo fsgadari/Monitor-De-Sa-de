@@ -5,14 +5,13 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import HealthForm from './pages/HealthForm';
 import RecordsTable from './pages/RecordsTable';
-import { Toaster } from 'sonner'; // 👈 Importa o Toaster do sonner
+import { Toaster } from 'sonner'; // <- aqui está o componente do sonner
 
 function App() {
   return (
     <HealthProvider>
       <Router>
-        {/* Toaster global para exibir popups */}
-        <Toaster position="top-center" richColors />
+        <Toaster position="top-center" richColors /> {/* <- este é o popup */}
         <Layout>
           <Routes>
             <Route path="/" element={<Dashboard />} />
