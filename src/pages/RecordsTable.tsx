@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHealth } from '../context/HealthContext';
 import DateFilterSelector from '../components/DateFilterSelector';
 import { DateFilter } from '../types';
 import { applyDateFilter } from '../utils/dateFilters';
@@ -9,8 +8,10 @@ import { Trash2, FilePlus, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { generatePDF } from '../utils/pdfGenerator';
 
+const dummyRecords = [];
+
 const RecordsTable: React.FC = () => {
-  const { records, deleteRecord, clearAllRecords } = useHealth();
+  const [records, setRecords] = useState(dummyRecords);
   const [dateFilter, setDateFilter] = useState<DateFilter>({ type: 'last30days' });
 
   const filteredRecords = applyDateFilter(records, dateFilter);
@@ -21,12 +22,18 @@ const RecordsTable: React.FC = () => {
 
   const handleDelete = (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir este registro?')) {
-      deleteRecord(id);
+      setRecords(prev => prev.filter(record => record.id !== id));
     }
   };
 
   const handleGeneratePDF = () => {
     generatePDF(records);
+  };
+
+  const clearAllRecords = () => {
+    if (window.confirm('Tem certeza que deseja excluir todos os registros?')) {
+      setRecords([]);
+    }
   };
 
   const isBloodPressureAbnormal = (systolic?: number, diastolic?: number): boolean => {
