@@ -17,10 +17,11 @@ export const generatePDF = async (records: HealthRecord[]) => {
   doc.setFontSize(10);
   doc.text(`Gerado em: ${currentDate}`, 15, 22);
 
-  // Captura os gráficos da tela
+  // Função para capturar os gráficos após um pequeno delay
   const captureChart = async (id: string) => {
     const el = document.getElementById(id);
     if (!el) return null;
+    await new Promise(resolve => setTimeout(resolve, 500)); // Aguarda renderização
     const canvas = await html2canvas(el);
     return canvas.toDataURL('image/png');
   };
@@ -29,8 +30,8 @@ export const generatePDF = async (records: HealthRecord[]) => {
   const bpImg = await captureChart('blood-pressure-chart');
   const hrImg = await captureChart('heart-rate-chart');
 
+  // Renderiza os gráficos na primeira página
   let y = 30;
-
   const renderImage = (img: string | null, height: number) => {
     if (img) {
       doc.addImage(img, 'PNG', 15, y, 90, height);
@@ -42,7 +43,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
   renderImage(bpImg, 40);
   renderImage(hrImg, 40);
 
-  // Tabela de resumo
+  // Resumo
   if (records.length > 0) {
     doc.setFontSize(14);
     doc.text('Resumo', 115, 30);
@@ -119,7 +120,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
     }
   });
 
-  // Rodapé
+  // Rodapé com paginação
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
