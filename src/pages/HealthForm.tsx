@@ -5,15 +5,20 @@ import { toast } from 'sonner';
 const HealthForm: React.FC = () => {
   const { addRecord } = useHealth();
 
+  const getLocalDateTime = () => {
+    const now = new Date();
+    const localISOTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+      .toISOString()
+      .substring(0, 16);
+    return localISOTime;
+  };
+
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [glycemia, setGlycemia] = useState('');
   const [heartRate, setHeartRate] = useState('');
   const [observations, setObservations] = useState('');
-  const [date, setDate] = useState(() => {
-    const now = new Date();
-    return now.toISOString().substring(0, 16);
-  });
+  const [date, setDate] = useState(getLocalDateTime);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,9 +44,8 @@ const HealthForm: React.FC = () => {
     setGlycemia('');
     setHeartRate('');
     setObservations('');
-    setDate(new Date().toISOString().substring(0, 16));
+    setDate(getLocalDateTime());
 
-    // Mostrar toast de sucesso
     toast.success('Registro salvo com sucesso!');
   };
 
