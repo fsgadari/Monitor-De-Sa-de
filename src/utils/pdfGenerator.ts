@@ -17,7 +17,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
   doc.setFontSize(10);
   doc.text(`Gerado em: ${currentDate}`, 15, 22);
 
-  // Tabela de resumo primeiro
+  // Tabela de resumo
   if (records.length > 0) {
     doc.setFontSize(14);
     doc.text('Resumo', 15, 30);
@@ -112,9 +112,11 @@ export const generatePDF = async (records: HealthRecord[]) => {
     willDrawCell: (data) => {
       const r = sorted[data.row.index];
       if (data.section === 'body') {
+        // Pressão arterial
         if (data.column.index === 1 && isAbnormal(r, 'bloodPressure')) {
           data.cell.styles.textColor = [239, 68, 68];
         }
+        // Glicemia
         if (data.column.index === 2 && isAbnormal(r, 'glycemia')) {
           data.cell.styles.textColor = [239, 68, 68];
         }
@@ -122,7 +124,7 @@ export const generatePDF = async (records: HealthRecord[]) => {
     }
   });
 
-  // Rodapé
+  // Rodapé com número de páginas
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
