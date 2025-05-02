@@ -94,8 +94,10 @@ export const generatePDF = async (records: HealthRecord[]) => {
   const isAbnormal = (r: HealthRecord, col: string) => {
     switch (col) {
       case 'bloodPressure':
-        return (r.systolic !== undefined && (r.systolic < 90 || r.systolic > 139)) ||
-               (r.diastolic !== undefined && (r.diastolic < 60 || r.diastolic > 90));
+        return (
+          (r.systolic !== undefined && (r.systolic < 90 || r.systolic > 139)) ||
+          (r.diastolic !== undefined && (r.diastolic < 60 || r.diastolic > 90))
+        );
       case 'glycemia':
         return r.glycemia !== undefined && (r.glycemia < 70 || r.glycemia > 180);
       default:
@@ -112,21 +114,24 @@ export const generatePDF = async (records: HealthRecord[]) => {
     headStyles: { fillColor: [59, 130, 246], textColor: 255 },
     willDrawCell: (data) => {
       const r = sorted[data.row.index];
-      
-      // Apenas em células do corpo da tabela
-      if (data.section === 'body') {
-        // Coluna de Pressão Arterial (índice 1)
-        if (data.column.index === 1 && isAbnormal(r, 'bloodPressure')) {
-          doc.setTextColor(255, 0, 0); // Aplica a cor vermelha no texto
-        } else if (data.column.index !== 1) {
-          doc.setTextColor(0, 0, 0); // Restabelece a cor preta para as outras células
-        }
 
-        // Coluna de Glicemia (índice 2)
-        if (data.column.index === 2 && isAbnormal(r, 'glycemia')) {
-          doc.setTextColor(255, 0, 0); // Aplica a cor vermelha no texto
-        } else if (data.column.index !== 2) {
-          doc.setTextColor(0, 0, 0); // Restabelece a cor preta para as outras células
+      if (data.section === 'body') {
+        // Verificar a coluna de pressão arterial (índice 1)
+        if (data.column.index === 1) {
+          if (isAbnormal(r, 'bloodPressure')) {
+            doc.setTextColor(255, 0, 0); // Vermelho para pressão arterial fora da normalidade
+          } else {
+            doc.setTextColor(0, 0, 0); // Preto para pressão normal
+          }
+        }
+        
+        // Verificar a coluna de glicemia (índice 2)
+        if (data.column.index === 2) {
+          if (isAbnormal(r, 'glycemia')) {
+            doc.setTextColor(255, 0, 0); // Vermelho para glicemia fora da normalidade
+          } else {
+            doc.setTextColor(0, 0, 0); // Preto para glicemia normal
+          }
         }
       }
     }
