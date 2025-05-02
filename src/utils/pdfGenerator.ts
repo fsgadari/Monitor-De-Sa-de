@@ -117,12 +117,16 @@ export const generatePDF = async (records: HealthRecord[]) => {
       if (data.section === 'body') {
         // Coluna de Pressão Arterial (índice 1)
         if (data.column.index === 1 && isAbnormal(r, 'bloodPressure')) {
-          data.cell.styles.textColor = [255, 0, 0]; // vermelho forte
+          doc.setTextColor(255, 0, 0); // Aplica a cor vermelha no texto
+        } else if (data.column.index !== 1) {
+          doc.setTextColor(0, 0, 0); // Restabelece a cor preta para as outras células
         }
 
         // Coluna de Glicemia (índice 2)
         if (data.column.index === 2 && isAbnormal(r, 'glycemia')) {
-          data.cell.styles.textColor = [255, 0, 0]; // vermelho forte
+          doc.setTextColor(255, 0, 0); // Aplica a cor vermelha no texto
+        } else if (data.column.index !== 2) {
+          doc.setTextColor(0, 0, 0); // Restabelece a cor preta para as outras células
         }
       }
     }
