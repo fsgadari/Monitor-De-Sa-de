@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FilePlus, ListChecks, Home } from 'lucide-react';
+import { FilePlus, ListChecks, Home, BarChart3 } from 'lucide-react'; // Adicionado BarChart3
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -61,11 +61,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span className="text-xs mt-1">Registros</span>
               </Link>
             </li>
+            <li className="flex-1">
+              <Link 
+                to="/dashboard" 
+                className={`flex flex-col items-center justify-center py-4 ${
+                  isActive('/dashboard') ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'
+                }`}
+              >
+                <BarChart3 size={24} />
+                <span className="text-xs mt-1">Gráficos</span>
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>
 
-      {/* Espaço para a navegação fixa não cobrir conteúdo */}
       <div className="h-20"></div>
     </div>
   );
