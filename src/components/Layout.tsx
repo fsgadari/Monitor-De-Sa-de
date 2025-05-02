@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FilePlus, ListChecks, Home, BarChart3 } from 'lucide-react'; // Adicionado BarChart3
+import { FilePlus, ListChecks, BarChart3 } from 'lucide-react'; // Removido o Home
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -28,17 +28,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <nav className="bg-white border-t border-gray-200 fixed bottom-0 w-full shadow-lg z-50">
         <div className="container mx-auto px-4">
           <ul className="flex justify-around">
-            <li className="flex-1">
-              <Link 
-                to="/" 
-                className={`flex flex-col items-center justify-center py-4 ${
-                  isActive('/') ? 'text-blue-600' : 'text-gray-500 hover:text-blue-500'
-                }`}
-              >
-                <Home size={24} />
-                <span className="text-xs mt-1">Início</span>
-              </Link>
-            </li>
             <li className="flex-1">
               <Link 
                 to="/form" 
@@ -76,6 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </nav>
 
+      {/* Espaço para a navegação fixa não cobrir conteúdo */}
       <div className="h-20"></div>
     </div>
   );
